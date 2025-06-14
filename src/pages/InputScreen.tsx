@@ -51,7 +51,7 @@ const InputScreen = () => {
         <input
           id="email"
           name="email"
-          type="text"
+          type="email"
           required
           className="border px-2 py-3 rounded-xl"
           placeholder="Enter an email, e.g thembamm3@gmail.com"
