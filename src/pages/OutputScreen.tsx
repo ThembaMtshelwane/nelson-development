@@ -1,14 +1,14 @@
 import { Link, useLocation } from "react-router";
 
-const Output = () => {
+const OutputScreen = () => {
   const location = useLocation();
   const { message } = location.state || {};
   return (
-    <div>
+    <div className=" px-4  w-full sm:w-[80%] ">
       <p>{message}</p>
       <Link to="/">Home</Link>
     </div>
   );
 };
 
-export default Output;
+export default OutputScreen;

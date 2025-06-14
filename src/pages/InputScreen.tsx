@@ -5,6 +5,7 @@ import { useNavigate } from "react-router";
 const InputScreen = () => {
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState<string>("");
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -17,8 +18,6 @@ const InputScreen = () => {
       const response = await axios.get(
         `https://yhxzjyykdsfkdrmdxgho.supabase.co/functions/v1/junior-dev?url=${apiURL}&email=${email}`
       );
-
-      console.log("response.data", response.data);
 
       navigate("/results", {
         state: {
@@ -38,7 +37,7 @@ const InputScreen = () => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="cursor-default px-4  w-full sm:w-[80%] flex flex-col gap-4 rounded-xl py-8"
+      className="cursor-default px-4  w-full sm:w-[80%] border flex flex-col gap-4 rounded-xl py-8"
     >
       <h2 className="text-center text-4xl font-bold">TEST</h2>
       <div className="flex flex-col p-2 gap-2">
