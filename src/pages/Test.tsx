@@ -3,7 +3,7 @@ const Test = () => {
     <div className="h-full flex items-center justify-center">
       <form
         action=""
-        className=" px-4  w-full sm:w-[80%] flex flex-col gap-4 rounded-xl py-8"
+        className="cursor-default px-4  w-full sm:w-[80%] flex flex-col gap-4 rounded-xl py-8"
       >
         <h2 className="text-center text-4xl font-bold">TEST</h2>
         <div className="flex flex-col p-2 gap-2">
@@ -15,7 +15,7 @@ const Test = () => {
             name="email"
             type="text"
             required
-            className="border p-2 rounded-xl"
+            className="border px-2 py-3 rounded-xl"
             placeholder="Enter a word, e.g example"
           />
         </div>
@@ -28,7 +28,7 @@ const Test = () => {
             name="apiURL"
             type="text"
             required
-            className="border p-2 rounded-xl"
+            className="border px-2 py-3 rounded-xl"
             placeholder="Neslson Development URL"
           />
         </div>
