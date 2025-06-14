@@ -3,7 +3,7 @@ const Test = () => {
     <div className="h-full flex items-center justify-center">
       <form
         action=""
-        className="border p-2  w-full sm:w-[80%] flex flex-col gap-4 rounded-xl py-4"
+        className=" px-4  w-full sm:w-[80%] flex flex-col gap-4 rounded-xl py-8"
       >
         <h2 className="text-center text-4xl font-bold">TEST</h2>
         <div className="flex flex-col p-2 gap-2">
