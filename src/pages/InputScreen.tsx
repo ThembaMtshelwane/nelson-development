@@ -32,7 +32,7 @@ const InputScreen = () => {
         setErrorMessage(error.response.data.error);
       } else {
         console.error("API request failed:", error);
-        setErrorMessage("Incorrect. Try again");
+        setErrorMessage("Error: Something went wrong");
       }
     } finally {
       setIsLoading(false);
