@@ -37,7 +37,7 @@ const InputScreen = () => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="cursor-default px-4  w-full sm:w-[80%] border flex flex-col gap-4 rounded-xl py-8"
+      className="cursor-default px-4  w-full sm:w-[80%]  flex flex-col gap-4 rounded-xl py-8"
     >
       <h2 className="text-center text-4xl font-bold">TEST</h2>
       <div className="flex flex-col p-2 gap-2">
