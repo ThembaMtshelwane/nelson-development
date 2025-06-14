@@ -1,11 +1,8 @@
 import InputScreen from "../components/InputScreen";
+import ScreenLayout from "../layout/ScreenLayout";
 
 const Test = () => {
-  return (
-    <div className="h-full flex items-center justify-center">
-      <InputScreen />
-    </div>
-  );
+  return <ScreenLayout children={<InputScreen />} />;
 };
 
 export default Test;
