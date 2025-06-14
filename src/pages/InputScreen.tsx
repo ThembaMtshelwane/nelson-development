@@ -5,6 +5,7 @@ import { useNavigate } from "react-router";
 const InputScreen = () => {
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -15,6 +16,7 @@ const InputScreen = () => {
     const apiURL = formData.get("apiURL") as string;
 
     try {
+      setIsLoading(true);
       const response = await axios.get(
         `https://yhxzjyykdsfkdrmdxgho.supabase.co/functions/v1/junior-dev?url=${apiURL}&email=${email}`
       );
@@ -32,6 +34,8 @@ const InputScreen = () => {
         console.error("API request failed:", error);
         setErrorMessage("Incorrect. Try again");
       }
+    } finally {
+      setIsLoading(false);
     }
   };
   return (
@@ -50,7 +54,7 @@ const InputScreen = () => {
           type="text"
           required
           className="border px-2 py-3 rounded-xl"
-          placeholder="Enter a word, e.g example"
+          placeholder="Enter an email, e.g thembamm3@gmail.com"
         />
       </div>
       <div className="flex flex-col p-2 gap-2">
@@ -67,8 +71,16 @@ const InputScreen = () => {
         />
       </div>
       <p className="text-red-400">{errorMessage}</p>
-      <button className="border w-fit mx-auto px-4 py-2 rounded-2xl hover:bg-[#DDE9F1] hover:text-[#161B24] cursor-pointer hover:scale-[1.01] font-bold">
-        SUBMIT
+      <button
+        type="submit"
+        className={`border w-fit mx-auto px-4 py-2 rounded-2xl hover:bg-[#DDE9F1] hover:text-[#161B24] cursor-pointer hover:scale-[1.01] font-bold ${
+          isLoading
+            ? "opacity-50 cursor-not-allowed bg-[#DDE9F1] text-[#161B24]"
+            : ""
+        }`}
+        disabled={isLoading}
+      >
+        {isLoading ? "SUBMITTING..." : "SUMBIT"}
       </button>
     </form>
   );
