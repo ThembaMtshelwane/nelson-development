@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useState, type FormEvent } from "react";
+import type { ApiErrorResponse } from "../types/api";
 
 const Play = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -15,19 +16,29 @@ const Play = () => {
     try {
       setIsLoading(true);
       const response = await axios.post(
-        "https://nelson-development-api-psi.vercel.app/",
-        { data: word }
+        // "https://nelson-development-api-psi.vercel.app/",
+        "http://localhost:9000",
+        { data: word },
       );
 
       setResults(response.data.word);
+      setErrorMessage("");
     } catch (error: unknown) {
-      if (axios.isAxiosError(error) && error.response && error.response.data) {
-        console.error("API request failed:", error.response.data.error);
-        setErrorMessage(error.response.data.error);
+      if (axios.isAxiosError<ApiErrorResponse>(error) && error.response) {
+        const { message, errors } = error.response.data;
+
+        if (errors && errors.length > 0) {
+          // Option A: Just show the first validation error message
+          setErrorMessage(errors[0].message);
+        } else {
+          // 3. Handle General HttpErrors or Server Errors
+          setErrorMessage(message || "An unexpected error occurred");
+        }
       } else {
         console.error("API request failed:", error);
         setErrorMessage("Error: Something went wrong");
       }
+      setResults([]);
     } finally {
       setIsLoading(false);
     }
