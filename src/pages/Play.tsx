@@ -1,46 +1,59 @@
 import axios from "axios";
-import { useState, type FormEvent } from "react";
+import { useState } from "react";
+import type { ApiErrorResponse } from "../types/api";
+import { useForm } from "react-hook-form";
 
 const Play = () => {
-  const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState<string[]>([]);
-  const [errorMessage, setErrorMessage] = useState<string>("");
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<{ word: string }>({
+    defaultValues: { word: "" },
+  });
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:9000";
 
-  const handleSubmitWord = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const formData = new FormData(e.currentTarget);
-    const word = formData.get("word") as string;
-
+  const handleSubmitWord = async (data: { word: string }) => {
+    const word = data.word;
     try {
-      setIsLoading(true);
-      const response = await axios.post(
-        "https://nelson-development-api-psi.vercel.app/",
-        { data: word }
-      );
-
+      const response = await axios.post(`${API_URL}`, { data: word });
       setResults(response.data.word);
     } catch (error: unknown) {
-      if (axios.isAxiosError(error) && error.response && error.response.data) {
-        console.error("API request failed:", error.response.data.error);
-        setErrorMessage(error.response.data.error);
+      if (axios.isAxiosError<ApiErrorResponse>(error) && error.response) {
+        const { message, errors } = error.response.data;
+        if (errors && errors.length > 0) {
+          setError("word", { type: "server", message: errors[0].message });
+        } else {
+          setError("word", {
+            type: "server",
+            message: message || "An unexpected error occurred",
+          });
+        }
       } else {
         console.error("API request failed:", error);
-        setErrorMessage("Error: Something went wrong");
+        setError("word", {
+          type: "server",
+          message: "Error: Something went wrong",
+        });
       }
-    } finally {
-      setIsLoading(false);
+      setResults([]);
     }
   };
   return (
     <div className="cursor-default px-4  w-full sm:w-[80%]  flex flex-col gap-4 rounded-xl py-8">
-      <form onSubmit={handleSubmitWord} className="flex flex-col gap-4">
+      <form
+        onSubmit={handleSubmit(handleSubmitWord)}
+        className="flex flex-col gap-4"
+      >
         <h2 className="text-center text-4xl font-bold">Word Decomposer</h2>
         <div className="flex flex-col p-2 gap-2">
           <label htmlFor="word" className="cursor-pointer">
             Word:
           </label>
           <input
+            {...register("word")}
             id="word"
             name="word"
             type="text"
@@ -49,17 +62,17 @@ const Play = () => {
             placeholder="Enter a word, e.g example"
           />
         </div>
-        <p className="text-red-400">{errorMessage}</p>
+        {errors.word && <p className="text-red-400">{errors.word.message}</p>}
         <button
           type="submit"
           className={`border w-fit mx-auto px-4 py-2 rounded-2xl hover:bg-[#DDE9F1] hover:text-[#161B24] cursor-pointer hover:scale-[1.01] font-bold ${
-            isLoading
+            isSubmitting
               ? "opacity-50 cursor-not-allowed bg-[#DDE9F1] text-[#161B24]"
               : ""
           }`}
-          disabled={isLoading}
+          disabled={isSubmitting}
         >
-          {isLoading ? "SUBMITTING..." : "SUMBIT"}
+          {isSubmitting ? "SUBMITTING..." : "SUMBIT"}
         </button>
       </form>
 
