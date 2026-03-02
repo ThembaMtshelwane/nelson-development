@@ -1,24 +1,26 @@
 import axios from "axios";
-import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router";
+import { useForm } from "react-hook-form";
+
+interface FormInputs {
+  email: string;
+  apiURL: string;
+}
 
 const InputScreen = () => {
   const navigate = useNavigate();
-  const [errorMessage, setErrorMessage] = useState<string>("");
-  const [isLoading, setIsLoading] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<FormInputs>();
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const formData = new FormData(e.currentTarget);
-
-    const email = formData.get("email") as string;
-    const apiURL = formData.get("apiURL") as string;
-
+  const handleSubmitForm = async (data: FormInputs) => {
+    const { email, apiURL } = data;
     try {
-      setIsLoading(true);
       const response = await axios.get(
-        `https://yhxzjyykdsfkdrmdxgho.supabase.co/functions/v1/junior-dev?url=${apiURL}&email=${email}`
+        `https://yhxzjyykdsfkdrmdxgho.supabase.co/functions/v1/junior-dev?url=${apiURL}&email=${email}`,
       );
 
       navigate("/results", {
@@ -27,20 +29,17 @@ const InputScreen = () => {
         },
       });
     } catch (error: unknown) {
-      if (axios.isAxiosError(error) && error.response && error.response.data) {
-        console.error("API request failed:", error.response.data.error);
-        setErrorMessage(error.response.data.error);
-      } else {
-        console.error("API request failed:", error);
-        setErrorMessage("Error: Something went wrong");
+      let errorMessage = "Error: Something went wrong";
+
+      if (axios.isAxiosError(error)) {
+        errorMessage = error.response?.data?.error || "API request failed";
       }
-    } finally {
-      setIsLoading(false);
+      setError("email", { type: "server", message: errorMessage });
     }
   };
   return (
     <form
-      onSubmit={handleSubmit}
+      onSubmit={handleSubmit(handleSubmitForm)}
       className="cursor-default px-4  w-full sm:w-[80%]  flex flex-col gap-4 rounded-xl py-8"
     >
       <h2 className="text-center text-4xl font-bold">TEST</h2>
@@ -49,6 +48,7 @@ const InputScreen = () => {
           Email:
         </label>
         <input
+          {...register("email", { required: "Email is required" })}
           id="email"
           name="email"
           type="email"
@@ -62,6 +62,13 @@ const InputScreen = () => {
           API URL:
         </label>
         <input
+        {...register("apiURL", { 
+            required: "URL is required",
+            pattern: {
+              value: /^(https?:\/\/)/,
+              message: "URL must start with http:// or https://"
+            }
+          })}
           id="apiURL"
           name="apiURL"
           type="text"
@@ -70,17 +77,17 @@ const InputScreen = () => {
           placeholder="Enter your URL"
         />
       </div>
-      <p className="text-red-400">{errorMessage}</p>
+      {errors.email && <p className="text-red-400">{errors.email.message}</p>}
       <button
         type="submit"
         className={`border w-fit mx-auto px-4 py-2 rounded-2xl hover:bg-[#DDE9F1] hover:text-[#161B24] cursor-pointer hover:scale-[1.01] font-bold ${
-          isLoading
+          isSubmitting
             ? "opacity-50 cursor-not-allowed bg-[#DDE9F1] text-[#161B24]"
             : ""
         }`}
-        disabled={isLoading}
+        disabled={isSubmitting}
       >
-        {isLoading ? "SUBMITTING..." : "SUMBIT"}
+        {isSubmitting ? "SUBMITTING..." : "SUMBIT"}
       </button>
     </form>
   );

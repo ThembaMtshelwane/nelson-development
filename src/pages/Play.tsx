@@ -17,8 +17,6 @@ const Play = () => {
 
   const handleSubmitWord = async (data: { word: string }) => {
     const word = data.word;
-    console.log("Submitting word:", word);
-
     try {
       const response = await axios.post(`${API_URL}`, { data: word });
       setResults(response.data.word);
